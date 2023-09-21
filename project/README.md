@@ -10,6 +10,8 @@ This is a web based adaption of my CS50 python final project:
 
 The web version (this project) uses the Flask (in Python) to host a site consisting of HTML skeleton, CSS styling, and javascript functionality.
 
+### DATA USED IN THE APPLICATION IS NOT ACCURATE FOR YEAR OF PUBLISH (2023). THIS PROJECT IS IS DEMONSTRATIVE AND USES A DATASET OF COUNTRY METRICS FROM 2018. DATA MAY BE UPDATED TO 2023 IN FUTURE IF A SUITABLE DATA SOURCE (MUST BE ACCESSIBLE VIA HTTP REQUESTS IN JSON FOMRAT) IS FOUND FOR POPULATION, GDP, LIFE EXPECTANCY AND CO2 EMISSIONS.
+
 
 ### Contents:
 
@@ -74,3 +76,11 @@ Via ajax, the javacsript array in "index.html" is sent to the Flask route "/rece
 
 
 ### 3. static (Python, CSS)
+
+#### 3.1. python/functions
+The "python" folder contains a file called "functions.py". This file contains python functions used by "app.py". The first  is a self-made significant figures rounding function, as I could only find decimal place rounding functions for python. The second is the old visualisation technique which used matplotlib to render graphs for each data metric to be displayed in "visual.html". In the end "chart.js" was used for data visualisation (see 2.3 for justification) however, it was decided to leave the original python visualisation function muted for backup and future reference.
+
+#### 3.2. style/styles.css
+The style folder contains the "styles.css" file which contains css styling for all the pages in templates. E.g., text alignment, table formatting, background colours, buttons/dropdown formatting, containers etc.
+
+
