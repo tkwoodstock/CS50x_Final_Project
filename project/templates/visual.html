@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!--script contents to convert to json object-->
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+
+
+        <script>
+
+            //inherit user selection from
+            document.addEventListener('DOMContentLoaded', function() {
+                    //old method:
+                //var user_selec = sessionStorage.getItem('proceed_selection');
+                sessionStorage.clear(); // clear stored array once it has been copied
+                // CLEAR AT DIFFERENT STAGES DEPENDING ON IF YOU WANT USER TO RELOAD PAGE ETC
+                // CHECK HOW TO USE THIS IF THERE ARE MULTIPLE SIMULTANEOUS USERS BEFORE UPLOADING!!!!!!!!
+
+                    //new method,
+                var inherited_data = JSON.parse(JSON.stringify('{{ data | tojson | safe }}'))
+                var data_selected = JSON.parse(inherited_data)
+                console.log("data array length: " + data_selected.length)
+
+
+                // DRAW GRAPH DEFAULT GRAPH AS POPULATION --------------------
+                //Create arrays for data fields for countries
+                // countries (x-axis):
+                cts = [];
+
+                // y-axis:
+                gdp = [];
+                population = [];
+                m_lf_exp = [];
+                f_lf_exp = [];
+                co2 = [];
+
+                //Fill data arrays with dicitonary from python:
+                for (let i = 0; i < data_selected.length; i++)
+                {
+                    cts.push(data_selected[i].Country);
+                    gdp.push(data_selected[i].GDP);
+                    population.push(data_selected[i].Population);
+                    m_lf_exp.push(data_selected[i]["Life Expectancy"]["Male"]);
+                    f_lf_exp.push(data_selected[i]["Life Expectancy"]["Female"]);
+                    co2.push(data_selected[i].CO2);
+                }
+
+                // download button: -------------
+                document.querySelector('#download_button').addEventListener('click' , function() {
+
+                    // Download population data as default visual is population
+                    csv_data = [["Country" , 'Population (million']];
+
+                    for (let i = 0; i < data_selected.length; i++)
+                    {
+                        sub_data = [data_selected[i]["Country"] ,  data_selected[i]["Population"]];
+                        csv_data.push(sub_data);
+                    }
+                    console.log("csv data: " + csv_data)
+
+                    let csvContent = "data:text/csv;charset=utf-8,";
+
+                    csv_data.forEach(function(rowArray) {
+                        let row = rowArray.join(",");
+                        csvContent += row + "\r\n";
+                    })
+
+                    var encodedUri = encodeURI(csvContent);
+                    var link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", "Population_sorted_data.csv");
+                    document.body.appendChild(link); // Required for FF
+
+                    link.click();
+                });
+                // end of download button ------------
+
+
+                // colours for bar charts
+                    // 10 shades:
+                let base_colours1 = ['#cceeff' , '#aaddff' , '#88ccff' , '#77bbff' , '#66aaff' , '#5599ff' , '#3388ff' , '#006aff' , '#0055cc' , '#004099'];
+                let base_colours2 = ['#ffe6cc' , '#ffcc99' ,  '#ffbf80' , '#ffb366' , '#ffa64d' , '#ff9933' , '#ff8c1a' , '#ff8000' , '#e67300' , '#cc6600'];
+                    // Select number of shades required depending on number of countries selected (i.e., length of data array)
+                let colours1 = [];
+                let colours2 = [];
+
+                for (let i = 0; i < data_selected.length; i++)
+                {
+                    colours1.push(base_colours1[i]);
+                    colours2.push(base_colours2[i]);
+                }
+                console.log("Colours1 array: " + colours1)
+                console.log("Colours2 array: " + colours2)
+
+
+
+                // create empty chart variable and empty chart data/label variables
+                let chart = document.getElementById('chart');
+                var graph2 = false;
+                let data = population; // set defualt data to show population visual
+                let lbl = 'Population (million)';
+
+
+                // Create chart and add relevant data
+                var graph = new Chart(chart, {
+                    type: 'bar',
+                    data: {
+                        labels: cts,
+                        datasets: [{
+                            label: lbl,
+                            data: data,
+                            borderWidth: 1,
+                            borderColor: '#36A2EB',
+                            backgroundColor: colours1,
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                // END OF DEFAULT GRAPH DRAW --------------------
+
+
+                // Whenever an item in the metric dropdown box changes:
+                document.querySelector('#dropdown').onchange = function () {
+
+                    metric = document.querySelector('#dropdown').value
+
+                    // create and show a sorted table for the selected metric (put N/A values at the bottom and sort numbers in descending order)
+                    var sorted = data_selected.sort((a , b) => {
+
+                        if (metric == "Life_Expectancy") // if metric is life expectancy sort by average (M+F/2)
+                        {
+                            if (typeof a["Life Expectancy"]["Male"] == "number" && typeof a["Life Expectancy"]["Female"] == "number" && typeof b["Life Expectancy"]["Male"] == "number" && typeof a["Life Expectancy"]["Female"] == "number")
+                            {
+                                return ((b["Life Expectancy"]["Male"] + b["Life Expectancy"]["Female"])/2) - ((a["Life Expectancy"]["Male"] + a["Life Expectancy"]["Female"])/2);
+                            }
+                            else if (typeof a[metric] == "string" && typeof b[metric] == "string")
+                            {
+                                return a[metric].localeCompare(b[metric]);
+                            }
+                            else if (typeof a[metric] == "string" && typeof b[metric] == "number")
+                            {
+                                return 1;
+                            }
+                            else if (typeof a[metric] == "number" && typeof b[metric] == "string")
+                            {
+                                return -1;
+                            }
+                        }
+
+                        else // For all metrics other than life expectancy sort by whichever number is larger
+                        {
+                            if (typeof a[metric] == "number" && typeof b[metric] == "number")
+                            {
+                                return b[metric] - a[metric];
+                            }
+                            else if (typeof a[metric] == "string" && typeof b[metric] == "string")
+                            {
+                                return a[metric].localeCompare(b[metric]);
+                            }
+                            else if (typeof a[metric] == "string" && typeof b[metric] == "number")
+                            {
+                                return 1;
+                            }
+                            else if (typeof a[metric] == "number" && typeof b[metric] == "string")
+                            {
+                                return -1;
+                            }
+                        }
+
+                    });
+
+                    var start_key = ''; // start key for units (e.g., $)
+                    var end_key1 = ''; // end key for units (e.g., million)
+                    var end_key2 = ''; // refers to female life expectancy (years)
+
+                    if (metric == 'Population')
+                    {
+                        heading = "Population (million)"
+                        end_key1 = ' million';
+                    }
+                    else if (metric == "GDP")
+                    {
+                        heading = "GDP ($ billion)"
+                        start_key = ' $';
+                        end_key1 = ' billion';
+                        end_key2 = ' thousand';
+                    }
+                    else if (metric == "CO2")
+                    {
+                        heading = "CO2 Emissions (metric tonnes per year)"
+                        end_key1 = ' Mt/year';
+                        end_key2 = 't/year';
+                    }
+                    else if (metric == "Life_Expectancy")
+                    {
+                        heading = "Life Expectancy (years)";
+                        end_key1 = ' years';
+                        end_key2 = ' years';
+                    }
+
+                    if (metric == "CO2")
+                    {
+                        document.querySelector('#data').innerHTML = '<br><table class="table table-striped" style="width: 70%"><tbody id="tbl"><tr><th class="underline">Country</th><th id="metric_heading" class="underline">' + heading + '</th><th class="underline">CO2 Emissions per Capita (tonnes per year)</th></tr></tbody></table>'
+                    }
+                    else if (metric == "GDP")
+                    {
+                        document.querySelector('#data').innerHTML = '<br><table class="table table-striped" style="width: 50%"><tbody id="tbl"><tr><th class="underline">Country</th><th id="metric_heading" class="underline">' + heading + '</th><th class="underline">GDP per Capita ($ thousand)</th></tr></tbody></table>'
+                    }
+                    else
+                    {
+                        document.querySelector('#data').innerHTML = '<br><table class="table table-striped" style="width: 50%"><tbody id="tbl"><tr><th class="underline">Country</th><th id="metric_heading" class="underline">' + heading + '</th></tr></tbody></table>'
+                    }
+
+                    for (let i = 0; i < sorted.length; i++)
+                    {
+                        if (metric == "CO2" || metric == "GDP")
+                        {
+                            document.querySelector('#tbl').innerHTML += '<tr><td>' + sorted[i].Country + '</td><td> ' + sorted[i][metric] + '</td><td>' + sorted[i][metric+'_percap'] + '</td></tr>';
+                        }
+                        else if (metric != "Life_Expectancy")
+                        {
+                            document.querySelector('#tbl').innerHTML += '<tr><td>' + sorted[i].Country + '</td><td> ' + sorted[i][metric] + '</td></tr>';
+                        }
+                        else // life expectancy is only remaining metric
+                        {
+                            document.querySelector('#tbl').innerHTML += '<tr><td>' + sorted[i].Country + ' (Male | Female) </td><td>' + sorted[i]["Life Expectancy"]["Male"] +  ' | ' + sorted[i]["Life Expectancy"]["Female"] + '</td></tr>';
+                        }
+                    }
+
+                    // ALLOW USER TO DOWNLOAD DATA IN SORTED ORDER
+                    document.querySelector('#download').innerHTML = '<br><button id="download_button1">Download Sorted Data</button>';
+
+                    // Create headings for csv file data
+                    if (metric == "Population")
+                    {
+                        csv_data = [["Country" ,  metric + ' (million']]
+                    }
+                    else if (metric == "GDP" || metric == "CO2")
+                    {
+                        csv_data = [["Country" ,  metric + ' (' + start_key.trim() + end_key1.trim() + ')' , metric + ' per Capita' + ' (' + start_key.trim() + end_key2.trim() + ')']]
+                    }
+                    else // life expectancy
+                    {
+                        csv_data = [["Country" , "Male Life Expectancy (years)" , "Female Life Expectancy (years)"]]
+                    }
+
+                    // Fill arrays with data for csv download
+                    for (let i = 0; i < sorted.length; i++)
+                    {
+                        if (metric == "Population")
+                        {
+                            sub_data = [sorted[i]["Country"] ,  sorted[i][metric]]
+                        }
+                        else if (metric == "GDP" || metric == "CO2")
+                        {
+                            sub_data = [sorted[i]["Country"] ,  sorted[i][metric] , sorted[i][metric+"_percap"]]
+                        }
+                        else // life expectancy is only remaining metric
+                        {
+                            sub_data = [sorted[i]["Country"] , sorted[i]["Life Expectancy"]["Male"] , sorted[i]["Life Expectancy"]["Female"]]
+                        }
+                        csv_data.push(sub_data)
+                    }
+
+                    //document.querySelector('#tester').innerHTML = csv_data // unblock to see what data is put into the csv file
+
+                    let csvContent = "data:text/csv;charset=utf-8,";
+
+                    csv_data.forEach(function(rowArray) {
+                        let row = rowArray.join(",")
+                        csvContent += row + "\r\n"
+                    })
+
+                    // Activate download button (taken from: https://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side)
+                    document.querySelector('#download_button1').addEventListener('click' , function() {
+                        var encodedUri = encodeURI(csvContent);
+                        var link = document.createElement("a");
+                        link.setAttribute("href", encodedUri);
+                        link.setAttribute("download", metric + "_sorted_data.csv");
+                        document.body.appendChild(link); // Required for FF
+
+                        link.click();
+                    });
+
+                    // END OF TABLE DISPLAY AND SORTING SECTION ----------------
+
+
+                    // SHOW GRAPHS SECTION ------------------------
+
+                    // Rewrite graph data in sorted order
+                    data1 = []
+                    data2 = []
+                    cts = []
+                    let min_years = 200
+                    for (let i = 0; i < sorted.length; i++)
+                    {
+                        cts.push(sorted[i]["Country"]);
+
+                        if (metric == "Population")
+                        {
+                            data1.push(sorted[i][metric]);
+                        }
+                        else if (metric == "GDP" || metric == "CO2")
+                        {
+                            met = metric + '_percap';
+                            data1.push(sorted[i][metric]);
+                            data2.push(sorted[i][met]);
+                        }
+                        else
+                        {
+                            data1.push(sorted[i]["Life Expectancy"]["Male"]);
+                            data2.push(sorted[i]["Life Expectancy"]["Female"]);
+
+                            if (sorted[i]["Life Expectancy"]["Male"] < min_years)
+                            {
+                                min_years = Math.floor(sorted[i]["Life Expectancy"]["Male"]);
+                            }
+                        }
+                    }
+
+
+                    // Write Labels for graphs for each metric
+                    if (metric == "Population")
+                    {
+                        lbl = "Population (million)";
+                    }
+                    else if (metric == "GDP")
+                    {
+                        lbl = "GDP ($ billion)";
+                        lbl2 = "GDP per capita ($ thousand)";
+                    }
+                    else if (metric == "CO2")
+                    {
+                        lbl = "CO2 Emissions (Mt/year)";
+                        lbl2 = "CO2 Emissions per capita (t/year)";
+                    }
+                    else
+                    {
+                        lbl1 = "Male Life Expectancy (years)"
+                        lbl2 = "Female Life Expectancy (years)"
+                    }
+
+                    if (metric != "Life_Expectancy")
+                    {
+                        // Empty data array and set y value to start at zero
+                        graph.config.data.datasets.length = 0;
+                        graph.config.options.scales.y.min = 0;
+
+                        // Fill data array (y_axis) with sorted, selected metric data
+                        graph.config.data.datasets.push({
+                                label: lbl,
+                                data: data1,
+                                borderWidth: 1,
+                                borderColor: '#36A2EB',
+                                backgroundColor: colours1,
+                            })
+
+                        // Fill data array (x_axis) with countries in selected order
+                        graph.config.data.labels = cts;
+
+
+                        // Only show 2 graphs in selection is GDP or CO2
+                        if (graph2 != false)
+                        {
+                            graph2.destroy()
+                            document.getElementById('chart2').remove()
+
+                            graph2 = false;
+                        }
+
+                        if (metric == "CO2" || metric == "GDP")
+                        {
+                            //TODO (RENDER A SECOND GRAPH IF METRIC IS GDP OR CO2)
+                            document.getElementById('graph_per_cap').innerHTML = '<canvas id="chart2"></canvas>';
+                            let chart2 = document.getElementById('chart2');
+
+                            graph2 = new Chart(chart2, {
+                                type: 'bar',
+                                data: {
+                                    labels: cts,
+                                    datasets: [{
+                                        label: lbl2,
+                                        data: data2,
+                                        borderWidth: 1,
+                                        borderColor: '#ff5500',
+                                        backgroundColor: colours2,
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+
+                        }
+
+                        graph.update()
+
+                    }
+                    else
+                    {
+
+                        // For life expectancy start y-axis at 55
+                        graph.config.data.datasets.length = 0;
+                        graph.config.options.scales.y.min = min_years-5;
+
+                        graph.config.data.datasets.push({
+                                label: lbl1,
+                                data: data1,
+                                borderWidth: 1
+                            })
+
+                        graph.config.data.datasets.push({
+                                label: lbl2,
+                                data: data2,
+                                borderWidth: 1
+                            })
+
+                        graph.config.data.labels = cts;
+
+                        // Remove second graph if life expectancy is selected
+                        if (graph2 != false)
+                        {
+                            graph2.destroy();
+                            document.getElementById('chart2').remove()
+
+                            graph2 = false;
+                        }
+
+                        graph.update()
+                    }
+
+
+
+                    // END OF SHOW GRAPHS
+                }
+
+            });
+
+        </script>
+        <link rel="stylesheet" type="text/css" href="{{url_for('static' , filename='style/styles.css')}}">
+        <title>Visualise Data</title>
+    </head>
+    <body>
+        <h1>
+            Graphical Data
+        </h1>
+        <hr>
+        <div class="page"><a href="{{ url_for('index') }}">Home</a></div>
+        <div class="container1">
+            <h3><u>Sort by metric</u></h3>
+            <select id="dropdown">
+                <option value="Population">Population</option>
+                <option value="GDP">GDP</option>
+                <option value="Life_Expectancy">Life Expectancy</option>
+                <option value="CO2">CO2 Emissions</option>
+            </select>
+            <br><br>
+        </div>
+        <div class="container1" id="graph_show">
+            <canvas id="chart"></canvas>
+        </div>
+        <div class="container1" id="graph_per_cap">
+        </div>
+
+        <div class="container1">
+            <div id="data" class="bold">
+                <br>
+                <table id="tbl" class="table table-striped" style="width: 50%">
+                    <tr><th class="underline">Country</th><th id="metric_heading" class="underline">Population (million)</th></tr>
+                    {% for i in data %}
+                        {% if i["Population"] == "N/A" %}
+                        <tr><td>{{ i["Country"] }}</td><td>{{ i["Population"] }}</td></tr>
+                        {% else %}
+                        <tr><td>{{ i["Country"] }}</td><td>{{ i["Population"] }}</td></tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+            <div id="download">
+                <br><button id="download_button">Download Sorted Data</button>
+            </div>
+            <div id="tester"></div>
+        </div>
+        <footer>
+            <hr>
+            <div>This is my <b>Final Project</b> for Harvard's Online <b>CS50x</b> Programming Course</div><br><div>Made by <b>Tyler Woodstock</b>: <a href="https://www.linkedin.com/in/tylerwoodstock/">Linkedin</a> | <a href="https://github.com/tkwoodstock/CS50x_Final_Project">Project Github Repo</a> | <a href="https://github.com/tkwoodstock">My Github</a></div>
+            <hr>
+            <a href="{{ url_for('index') }}">Home</a>
+            <hr>
+        </footer>
+    </body>
+</html>
