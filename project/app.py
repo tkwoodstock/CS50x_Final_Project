@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import requests
 import json
-
+from static.python.functions import round_sig_figs
 
 app = Flask(__name__)
 
@@ -139,6 +139,7 @@ def tester():
 
 #-----------------------------
 
+"""
 def round_sig_figs(n , figs):
     #copy number
     copy = float(n)
@@ -174,6 +175,7 @@ def round_sig_figs(n , figs):
     else:
         return round(n , figs)
 
+"""
 
 
 if __name__=="__main__":
