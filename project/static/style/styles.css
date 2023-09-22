@@ -1,0 +1,123 @@
+body {
+    background-color: #f0ffff
+}
+
+h1 {
+    text-align: center;
+    font-size: 40px;
+}
+
+h2 {
+    text-decoration: underline;
+    padding: 5px;
+    font-size: 30px;
+}
+
+h3 {
+    padding: 5px;
+    font-size: 20px;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.table_container {
+    padding: 5px;
+    margin: auto;
+}
+
+table {
+    width: 90%;
+    border: 1px solid;
+    margin-left: auto;
+    margin-right: auto;
+    text: center;
+}
+
+th {
+    border: 1px solid;
+    font-weight: bold;
+    height: 40px;
+    width: auto;
+    text-align: center;
+}
+
+td {
+    border: 1px solid;
+    width: 50 px;
+    text-align: center;
+}
+
+.th_button {
+    background-color: #f0f0f0;
+    font-size: 10px;
+}
+
+.selected_th_button {
+    background-color: #d0d0d0;
+    font-size: 10px;
+}
+
+.table2
+{
+    width: 60% !important;
+}
+
+.page {
+    text-align: left;
+    margin-left: 20px;
+}
+
+.container1 {
+    padding: 5px;
+    margin: auto;
+    text-align: center;
+}
+
+.container2 {
+    padding: 10px;
+    margin-left: 360px;
+    text-align: left !important;
+}
+
+.input_box {
+    width: 200px;
+}
+
+.suggestion_box {
+    width: 200px;
+    overflow-y: auto;
+    cursor: pointer;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+
+footer {
+    position: relative;
+    bottom: 0px;
+    width: 100%;
+    text-align: center;
+    overflow: auto;
+}
+
+.spacing {
+    word-spacing: normal !important;
+    padding: 25px;
+}
+
+canvas {
+    height: 400px !important;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: auto;
+}
