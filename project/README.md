@@ -78,7 +78,7 @@ Via ajax, the javacsript array in "index.html" is sent to the Flask route "/rece
 ### 3. static (Python, CSS)
 
 #### 3.1. python/functions
-The "python" folder contains a file called "functions.py". This file contains python functions used by "app.py". The first  is a self-made significant figures rounding function, as I could only find decimal place rounding functions for python. The second is the old visualisation technique which used matplotlib to render graphs for each data metric to be displayed in "visual.html". In the end "chart.js" was used for data visualisation (see 2.3 for justification) however, it was decided to leave the original python visualisation function muted for backup and future reference.
+The "python" folder contains a file called "functions.py". This file contains python functions used by "app.py". The first is a self-made significant figures rounding function, as I could only find decimal place rounding functions for python. The second is the old visualisation technique which used matplotlib to render graphs for each data metric to be displayed in "visual.html". In the end "chart.js" was used for data visualisation (see 2.3 for justification) however, it was decided to leave the original python visualisation function muted for backup and future reference.
 
 #### 3.2. style/styles.css
 The style folder contains the "styles.css" file which contains css styling for all the pages in templates. E.g., text alignment, table formatting, background colours, buttons/dropdown formatting, containers etc.
