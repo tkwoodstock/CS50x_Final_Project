@@ -62,6 +62,7 @@ user_choices = []
 #Flask functions -----------------
 @app.route("/")
 def index():
+    user_choices.clear()
     return render_template("index.html" , c=COUNTRIES , dat=COUNTRIES_DATA)
 
 
