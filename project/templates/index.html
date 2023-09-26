@@ -156,7 +156,7 @@
 
 
                     // Regular expression, if items in list contain and start with input characters
-                    let re = RegExp('^'+input.value , "i");
+                    let re = RegExp('^'+input.value.trim() , "i");
                     let matches = [];
 
                     // Store all matches
