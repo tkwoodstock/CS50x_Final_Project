@@ -5,7 +5,8 @@
 
 ### Description:
 
-##### See project folder for Flask application scripts (resources folder contains data scraping scripts, and the resulting csv database which is used by the web app)
+#### See project folder for Flask application scripts 
+#### See resources folder for python data scraping scripts and the resulting csv database (which is used by the web app)
 
 This is a web based adaption of my CS50 python final project:
 - CS50p project Github Repo: https://github.com/tkwoodstock/cs50p_final_project/tree/main
