@@ -3,7 +3,7 @@
 #### Video Demo:  <https://www.youtube.com/watch?v=8Qm-kIGWG2c>
 #### Website link: <https://tkwoodstock.pythonanywhere.com/>
 
-#### Description:
+### Description:
 
 ##### See project folder for Flask application scripts, see resources folder for data scraping and data source
 
