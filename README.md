@@ -12,7 +12,7 @@ This is a web based adaption of my CS50 python final project:
 - CS50p project Github Repo: https://github.com/tkwoodstock/cs50p_final_project/tree/main
 - CS50p project Video: https://youtu.be/Dni5MiR7Or0
 
-The web version (this project) uses the Flask (in Python) to host a site consisting of HTML skeleton, CSS styling, and javascript functionality.
+The web version (this project) uses Flask (in Python) to host a site consisting of HTML skeleton, CSS styling, and javascript functionality.
 
 #### DATA USED IN THE APPLICATION IS NOT ACCURATE FOR YEAR OF PUBLISH (2023). THIS PROJECT IS DEMONSTRATIVE AND USES A DATASET OF COUNTRY METRICS FROM 2018. DATA MAY BE UPDATED TO 2023 IN FUTURE IF A SUITABLE DATA SOURCE (MUST BE ACCESSIBLE VIA HTTP REQUESTS AND PRESENTED IN JSON FOMRAT) IS FOUND FOR POPULATION, GDP, LIFE EXPECTANCY AND CO2 EMISSIONS.
 
