@@ -1,7 +1,43 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import requests
 import json
-from static.python.functions import round_sig_figs
+
+
+def round_sig_figs(n , figs):
+    #copy number
+    copy = float(n)
+    count = 0
+
+    #find number of digits in number
+    if copy > 1:
+        while copy > 1:
+            copy = copy/10
+            count += 1
+
+        #round copy now less than zero to specific sig figs
+        rounded_as_decimal = round(copy , figs)
+        #reinstate order of number (multiply by 10^(n_digits)) in two steps to avoid rounding errors
+        to_int = int(rounded_as_decimal*10**figs)
+        result = to_int/(10**(figs-count))
+        return result
+
+    elif copy < 0.1:
+        while copy < 0.1:
+            copy = copy*10
+            count += 1
+
+        #round copy now less than zero to specific sig figs
+        rounded_as_decimal = round(copy , figs-1)
+        #reinstate order of number (multiply by 10^(n_digits))
+        str_num = str(rounded_as_decimal/(10**(count)))
+        result = ""
+        for i in range(figs+2):
+            result += str_num[i]
+        return float(result)
+
+    else:
+        return round(n , figs)
+
 
 app = Flask(__name__)
 
@@ -66,8 +102,11 @@ def index():
     return render_template("index.html" , c=COUNTRIES , dat=COUNTRIES_DATA)
 
 
-@app.route("/visual")
+@app.route("/visual" , methods = ["GET" , "POST"])
 def visual():
+
+    if request.method == "GET":
+        return redirect("/")
 
     #Create array of data for user chosen countries
     user_data = []
@@ -102,6 +141,7 @@ def visual():
             #append formatted dictionary to list of data for user selection
             user_data.append(dict)
 
+
     #sort user data by population in descending order, store in variable called choices, which is passed to "visual.html"
     choices = sorted(user_data, key= lambda x: (x["Population"] != "N/A", x["Population"]), reverse = True)
 
@@ -134,51 +174,12 @@ def tester():
         if i in COUNTRIES:
             user_choices.append(i)
 
-    return render_template("receiver.html")
-
-
-
-#-----------------------------
-
-"""
-def round_sig_figs(n , figs):
-    #copy number
-    copy = float(n)
-    count = 0
-
-    #find number of digits in number
-    if copy > 1:
-        while copy > 1:
-            copy = copy/10
-            count += 1
-
-        #round copy now less than zero to specific sig figs
-        rounded_as_decimal = round(copy , figs)
-        #reinstate order of number (multiply by 10^(n_digits)) in two steps to avoid rounding errors
-        to_int = int(rounded_as_decimal*10**figs)
-        result = to_int/(10**(figs-count))
-        return result
-
-    elif copy < 0.1:
-        while copy < 0.1:
-            copy = copy*10
-            count += 1
-
-        #round copy now less than zero to specific sig figs
-        rounded_as_decimal = round(copy , figs-1)
-        #reinstate order of number (multiply by 10^(n_digits))
-        str_num = str(rounded_as_decimal/(10**(count)))
-        result = ""
-        for i in range(figs+2):
-            result += str_num[i]
-        return float(result)
-
-    else:
-        return round(n , figs)
-
-"""
+    return 0
 
 
 if __name__=="__main__":
     app.run()
+
+#-----------------------------
+
 
