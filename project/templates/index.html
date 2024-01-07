@@ -317,9 +317,9 @@
         </h1>
         <hr>
         <div class="container1">
-            <h3 class="container1"><u>Choose up to 10 countries for data comparison:</u></h3>
+            <h3 class="container1"><u>Select up to 10 countries for data comparison:</u></h3>
             <br>
-            <form autocomplete="off" action="{{ url_for('visual') }}" method="get" id="form1">
+            <form autocomplete="off" action="/visual" method="post" id="form1">
                 <input id="input" class="input_box" type="text" placeholder="Search" autofocus="true">
                 <div id="result"></div>
                 <div id="selection" class="container1"></div>
