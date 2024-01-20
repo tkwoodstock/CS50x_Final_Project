@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+#wsgi file for configuration when hosting using apache on linux VM
 import sys
 import logging
 logging.basicConfig(stream=sys.stderr)
