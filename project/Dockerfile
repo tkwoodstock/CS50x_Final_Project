@@ -1,4 +1,4 @@
-## example build command: docker build -f Dockerfile -t <image_name> .
+## example build command: "docker build -f Dockerfile -t <image_name> ."
 
 # get python 3.7 (built on top of linux distro)
 FROM python:3.10-slim
