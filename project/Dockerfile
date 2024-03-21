@@ -1,3 +1,5 @@
+## example build command: docker build -f Dockerfile -t <image_name> .
+
 # get python 3.7 (built on top of linux distro)
 FROM python:3.10-slim
 
@@ -5,7 +7,7 @@ FROM python:3.10-slim
 WORKDIR /flask_app
 
 # get the flask project into the working directory 
-# (run this command from inside /project)
+# (run build command from inside project/ directory)
 COPY . /flask_app
 
 # get requirements
