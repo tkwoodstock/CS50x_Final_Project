@@ -54,8 +54,12 @@ COUNTRIES_DATA = []
 #send request to github for data list
 url = "https://github.com/tkwoodstock/CS50x_Final_Project/blob/main/resources/data4app.csv"
 response = requests.get(url)
-object = response.json()
-data = object['payload']['blob']['csv'] #filter for list of countries
+obj = response.text.split('"path":"resources/data4app.csv')[2].split(',"csvError":null')[0]
+data = json.loads(obj.split(':null,"csv":')[1])
+
+## old method for above (no longer functional): 
+##        obj = response.json()
+##        data = obj['payload']['blob']['csv'] #filter for list of countrie
 
 
 #parse header row
