@@ -8,7 +8,7 @@
 #### See 'project' folder for Flask application scripts 
 #### See 'resources' folder for data scraping scripts and the resulting csv file (which is used by the web app)
 
-This is a web based adaption of my CS50 python final project:
+This is a web-based adaption of my CS50 python final project:
 - CS50p project Github Repo: https://github.com/tkwoodstock/cs50p_final_project/tree/main
 - CS50p project Video: https://youtu.be/Dni5MiR7Or0
 
