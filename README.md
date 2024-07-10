@@ -4,7 +4,7 @@
 #### Website link: <https://tkwoodstock.pythonanywhere.com/>
 
 
-![cs50x_project_clip_2x](https://github.com/tkwoodstock/CS50x_Final_Project/assets/92792893/a6086fae-887d-4423-b3a9-b8c6726219dc)
+![cs50x_project_clip_2x](https://github.com/tkwoodstock/CS50x_Final_Project/assets/92792893/f5c86ceb-00a9-4843-9c52-faecd2d476cb)
 
 
 
