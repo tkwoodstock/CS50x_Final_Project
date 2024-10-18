@@ -1,7 +1,7 @@
 # Tyler Woodstock Harvard CS50x final project: COUNTRIES (Web Version)
 
 #### Video Demo:  <https://www.youtube.com/watch?v=8Qm-kIGWG2c>
-#### Website link: <https://tkwoodstock.pythonanywhere.com/>
+#### Website link (no longer active): <https://tkwoodstock.pythonanywhere.com/>
 
 
 ![cs50x_project_clip_2x](https://github.com/tkwoodstock/CS50x_Final_Project/assets/92792893/f5c86ceb-00a9-4843-9c52-faecd2d476cb)
